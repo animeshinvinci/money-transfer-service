@@ -38,7 +38,7 @@ task e2e(type: Test) {
     group 'verification'
 }
 
-// check.dependsOn integrationTest
+check.dependsOn it
 
 jar {
     manifest {
