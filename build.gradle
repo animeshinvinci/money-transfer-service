@@ -1,0 +1,69 @@
+plugins {
+    id 'java'
+}
+
+group 'com.kminkov'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform {
+        excludeTags 'it'
+        excludeTags 'e2e'
+        includeTags 'unit'
+    }
+}
+
+task it(type: Test) {
+    useJUnitPlatform {
+        excludeTags 'unit'
+        excludeTags 'e2e'
+        includeTags 'it'
+    }
+    group 'verification'
+    mustRunAfter test
+}
+
+task e2e(type: Test) {
+    useJUnitPlatform {
+        excludeTags 'unit'
+        excludeTags 'it'
+        includeTags 'e2e'
+    }
+    group 'verification'
+}
+
+// check.dependsOn integrationTest
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.kminkov.payment.Application'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    compile 'com.sparkjava:spark-core:2.8.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
+    compile 'org.apache.commons:commons-lang3:3.0'
+    compile 'com.google.guava:guava:11.0.2'
+    compile 'org.springframework.boot:spring-boot-starter-webflux:2.1.9.RELEASE'
+    compile 'org.projectlombok:lombok:1.18.10'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
+    testCompile 'org.mockito:mockito-all:1.9.5'
+
+    testImplementation 'io.rest-assured:rest-assured:4.1.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
